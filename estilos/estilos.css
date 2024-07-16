@@ -1,28 +1,122 @@
-.menu {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
 }
 
-.main {
+body {
+    background: #efefef;
 }
 
 form.pesquisa-solicitacoes {
     margin-top: 50px;
     display: inline-block;
-    max-width: 500px;
-    min-width: 30%;
+    max-width: 700px;
+    min-width: 45%;
     padding: 20px;
+}
+
+.pesquisa-solicitacoes .input-group, .pesquisa-solicitacoes input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    outline: 0;
+    font-size: 1.9vh;
+    background-color: white;
+}
+
+.pesquisa-solicitacoes .input-group {
+    box-shadow: rgba(131, 126, 126, 0.21) 15px 25px 25px;
+}
+
+.pesquisa-solicitacoes input::placeholder {
+    color: #c4c4c4;
+}
+
+.pesquisa-solicitacoes .input-group .input-group-addon label {
+    background: transparent;
+    border: none;
+    color: #c4c4c4;
+    width: 40px;
+    height: 50px;
+    font-size: 3vh;
+}
+
+.solicitacoes table.tabela-solicitacoes {
+    text-align: center;
+    margin: 40px auto;
+    font-size: 1.9vh;
+    border-radius: 15px;
+    overflow: hidden;
+    padding: 0 10px;
+    width: 100%;
+    box-shadow: rgba(131, 126, 126, 0.21) 5px 5px 5px;
+}
+
+.solicitacoes table.tabela-solicitacoes tr th, .solicitacoes table.tabela-solicitacoes tr td {
+    padding-top: 1.6%;
+}
+
+.solicitacoes table.tabela-solicitacoes  td form button{
+    margin-top: -6%;
+}
+
+.botao-voltar {
+    padding: 20px;
+    margin-top: 50px;
+    display: inline-block;
+}
+
+.botao-voltar button {
+    padding: 15px;
+    width: 10vh;
 }
 
 form.descricao-solicitacao {
     margin-top: 50px;
     display: inline-block;
+    padding: 20px 0;
+    justify-content: center;
+}
+
+form.descricao-solicitacao input, form.descricao-solicitacao select{
     padding: 20px;
 }
-.tabela-solicitacoes {
-    border: 1px solid grey;
-    border-radius: 30px;
+
+form.descricao-solicitacao button {
+    padding: 15px;
+    width: 15vh;
+}
+
+div.botao-salvar {
+    display: flex;
+    justify-content: right;
+}
+
+.alert-warning {
+    display: inline-block;
+    width: 98.3%;
+    text-align: center;
+    margin: 0 auto 20px;
+    background-color: #ffd6b0;
+    border: none;
+    color: black;
+    font-size: 1.9vh;
 }
 
 label {
     font-weight: 750;
     font-size: 1.9vh;
+}
+
+.rodape {
+    background-color: #edf8fc;
+    color: #83b5d0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25vh;
+    margin-top: 5%;
 }

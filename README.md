@@ -1,6 +1,8 @@
 # EduardoMoreira_Sitcon
 Repositório dedicado à realização de um teste
 
+---
+
 ## Configurações da Conexão Com o Banco de Dados:
 
 * Servidor: localhost
@@ -9,11 +11,17 @@ Repositório dedicado à realização de um teste
 * Nome do Banco de Dados: teste_sitcon
 * Port: 3306
 
+---
+
 ## Estrutura do Banco de Dados:
 
 CREATE DATABASE teste_sitcon;
 
+---
+
 USE teste_sitcon;
+
+---
 
 CREATE TABLE pacientes (
     id INT AUTO_INCREMENT,
@@ -27,6 +35,9 @@ CREATE TABLE pacientes (
 
 ) DEFAULT CHARSET = utf8;
 
+
+---
+
 CREATE TABLE profissional (
     id INT AUTO_INCREMENT,
     nome VARCHAR(40),
@@ -36,6 +47,9 @@ CREATE TABLE profissional (
 
 ) DEFAULT CHARSET = utf8;
 
+
+---
+
 CREATE TABLE tipoSolicitacao (
     id INT AUTO_INCREMENT,
     descricao VARCHAR(40),
@@ -44,6 +58,9 @@ CREATE TABLE tipoSolicitacao (
     CONSTRAINT PK_id_tipoSolicitacao PRIMARY KEY (id)
 
 ) DEFAULT CHARSET = utf8;
+
+
+---
 
 CREATE TABLE procedimentos (
     id INT AUTO_INCREMENT,
@@ -56,6 +73,9 @@ CREATE TABLE procedimentos (
     REFERENCES tipoSolicitacao (id) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) DEFAULT CHARSET = utf8;
+
+
+---
 
 CREATE TABLE profissionalAtende (
     id INT AUTO_INCREMENT,
@@ -71,6 +91,36 @@ CREATE TABLE profissionalAtende (
     REFERENCES profissional(id) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) DEFAULT CHARSET = utf8;
+
+
+---
+
+CREATE TABLE solicitacoes (
+    id INT AUTO_INCREMENT,
+    id_paciente INT,
+    id_profissional INT,
+    id_tipoSolicitacao INT,
+    id_procedimento INT,
+    dataProcedimento DATE,
+    horaProcediemento TIME,
+
+    CONSTRAINT PK_id_solicitacoes PRIMARY KEY (id),
+
+    CONSTRAINT FK_id_paciente_solicitacoes FOREIGN KEY (id_paciente)
+    REFERENCES pacientes(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT FK_id_profissional_solicitacoes FOREIGN KEY (id_profissional)
+    REFERENCES profissional(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT FK_id_tipoSolicitacao_solicitacoes FOREIGN KEY (id_tipoSolicitacao)
+    REFERENCES tipoSolicitacao(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT FK_id_procedimento_solicitacoes FOREIGN KEY (id_procedimento)
+    REFERENCES procedimentos(id) ON DELETE CASCADE ON UPDATE CASCADE
+
+) DEFAULT CHARSET = utf8;
+
+---
 
 ## Inserção dos Dados:
 
@@ -119,3 +169,7 @@ insert into profissionalAtende (id, procedimento_id, profissional_id, status) va
 
 * ConexaoBancoDados
 * * ExecutarQueryMysql
+* * * AlterarSolitacao
+* 
+* (Static) AntiInjecaoMysql
+* (Static) FormatarCPF
