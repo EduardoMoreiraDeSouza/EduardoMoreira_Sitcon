@@ -1,0 +1,18 @@
+.menu {
+}
+
+.main {
+}
+
+form.pesquisa-solicitacoes {
+    margin-top: 50px;
+    display: inline-block;
+    max-width: 500px;
+    min-width: 30%;
+    padding: 20px;
+}
+
+.tabela-solicitacoes {
+    border: 1px solid grey;
+    border-radius: 30px;
+}
