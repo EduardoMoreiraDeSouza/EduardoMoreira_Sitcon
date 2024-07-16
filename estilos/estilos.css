@@ -12,7 +12,17 @@ form.pesquisa-solicitacoes {
     padding: 20px;
 }
 
+form.descricao-solicitacao {
+    margin-top: 50px;
+    display: inline-block;
+    padding: 20px;
+}
 .tabela-solicitacoes {
     border: 1px solid grey;
     border-radius: 30px;
+}
+
+label {
+    font-weight: 750;
+    font-size: 1.9vh;
 }

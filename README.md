@@ -1,6 +1,14 @@
 # EduardoMoreira_Sitcon
 Repositório dedicado à realização de um teste
 
+## Configurações da Conexão Com o Banco de Dados:
+
+* Servidor: localhost
+* Usuário: root
+* Senha:
+* Nome do Banco de Dados: teste_sitcon
+* Port: 3306
+
 ## Estrutura do Banco de Dados:
 
 CREATE DATABASE teste_sitcon;
@@ -105,3 +113,9 @@ insert into profissionalAtende (id, procedimento_id, profissional_id, status) va
 insert into profissionalAtende (id, procedimento_id, profissional_id, status) values ('0', 4, 1, 'ativo');
 insert into profissionalAtende (id, procedimento_id, profissional_id, status) values ('0', 5, 1, 'ativo');
 insert into profissionalAtende (id, procedimento_id, profissional_id, status) values ('0', 6, 1, 'ativo');
+
+
+## Herança das classes PHP:
+
+* ConexaoBancoDados
+* * ExecutarQueryMysql
