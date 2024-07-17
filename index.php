@@ -5,8 +5,7 @@
 	<meta charset="UTF-8">
 
 	<!-- Bootstrap CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-	      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
@@ -14,10 +13,10 @@
 	<link href="./estilos/estilos.css" rel="stylesheet">
 
 </head>
+
 <body>
 
 <section class="menu position-absolute fixed-top">
-
 	<nav class="navbar navbar-primary fixed-top bg-primary">
 		<div class="container text-end">
 			<div class="col">
@@ -46,7 +45,12 @@
 
 	$query = new ExecutarQueryMysql();
 
-	if (!isset($_GET['id']) and !isset($_GET['listagemSolicitacoes'])) {
+	if (isset($_GET['paginacao']) and !empty($_GET['paginacao']))
+		$paginacao = AntiInjecaoMysql ::AntiInjecaoMysql($_GET['paginacao']) * 10;
+	else
+		$paginacao = 0;
+
+	if (!isset($_GET['id']) and !isset($_GET['listagemSolicitacoes']) and !isset($_GET['pesquisa_lista'])) {
 
 		?>
 
@@ -74,12 +78,23 @@
 			<?php
 
 			if (isset($_GET['pesquisa']) and !empty($_GET['pesquisa'])) {
+
 				$pesquisa = AntiInjecaoMysql ::AntiInjecaoMysql(($_GET['pesquisa']));
-				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';");
+				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%' LIMIT 10 OFFSET $paginacao;");
+				$quantidadePacientes = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql("SELECT COUNT(*) FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';"
+					)
+				)['COUNT(*)'];
 			}
 
-			else
-				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes");
+			else {
+				$execucaoQuery = $query -> ExecutarQueryMysql(
+					"SELECT * FROM teste_sitcon.pacientes LIMIT 10 OFFSET $paginacao;"
+				);
+				$quantidadePacientes = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql("SELECT COUNT(*) FROM teste_sitcon.pacientes;")
+				)['COUNT(*)'];
+			}
 
 			$contador = 0;
 			while ($dados = mysqli_fetch_assoc($execucaoQuery)) {
@@ -95,24 +110,46 @@
 					<td style="background-color: <?= $cor ?>;"><?= FormatarCPF ::FormatarCPF($dados['cpf']) ?></td>
 					<td style="background-color: <?= $cor ?>;">
 						<form method="GET">
-							<button type="submit" class="btn text-light fs-5" name="id" style="background-color: #ff8200" value="<?= $dados['id'] ?>">Prosseguir</button>
+							<button type="submit" class="btn text-light fs-5" name="id"
+							        style="background-color: #ff8200" value="<?= $dados['id'] ?>">Prosseguir
+							</button>
 						</form>
 					</td style="background-color: <?= $cor ?>;">
 				</tr>
 
-				<?php $contador++; } ?>
+				<?php $contador++;
+			} ?>
 
 			</tbody>
 		</table>
 
+		<nav class="d-flex justify-content-center">
+			<ul class="pagination">
+				<?php
+				$quantidadePaginas = ceil($quantidadePacientes / 10);
+				$contador = 0;
+				for ($i = 0; $i < $quantidadePaginas; $i++) { ?>
+					<li class="page-item"><a class="page-link" href="?paginacao=<?= $i ?>"><?= $i + 1 ?></a></li>
+				<?php } ?>
+			</ul>
+		</nav>
+
 		<?php
 	}
 
-	elseif (isset($_GET['listagemSolicitacoes']) and !empty($_GET['listagemSolicitacoes'])) {
+	elseif (isset($_GET['listagemSolicitacoes']) and !empty($_GET['listagemSolicitacoes']) or isset($_GET['pesquisa_lista']) and !empty($_GET['pesquisa_lista'])) {
 
 		?>
 
-		<div class="divisao"></div>
+		<form class="form pesquisa-solicitacoes mb-5 mt-5" method="GET">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<label for="pesquisa"><i class="fa fa-search"></i></label>
+				</span>
+				<input class="form-control border-black" type="search" placeholder="Pesquisar" id="pesquisa"
+				       name="pesquisa_lista">
+			</div>
+		</form>
 
 		<table class="table text-center tabela-solicitacoes tabela-listagem mt-5">
 			<thead>
@@ -129,38 +166,88 @@
 
 			<?php
 
-			if (isset($_GET['pesquisa']) and !empty($_GET['pesquisa'])) {
-				$pesquisa = AntiInjecaoMysql ::AntiInjecaoMysql(($_GET['pesquisa']));
-				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';");
+			if (isset($_GET['pesquisa_lista']) and !empty($_GET['pesquisa_lista'])) {
+				$pesquisa = AntiInjecaoMysql ::AntiInjecaoMysql(($_GET['pesquisa_lista']));
+				$execucaoQuery = $query -> ExecutarQueryMysql(
+					"SELECT * FROM teste_sitcon.solicitacoes
+						    LEFT JOIN pacientes on solicitacoes.id_paciente = pacientes.id
+						    LEFT JOIN procedimentos on solicitacoes.id_procedimento = procedimentos.id
+						    LEFT JOIN tiposolicitacao on solicitacoes.id_tiposolicitacao = tiposolicitacao.id
+						WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%' or procedimentos.descricao LIKE '%$pesquisa%' or tipoSolicitacao.descricao LIKE '%$pesquisa%' LIMIT 10 OFFSET 0;"
+				);
+				$quantidadePacientes = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql(
+						"SELECT COUNT(*) FROM teste_sitcon.solicitacoes
+						    LEFT JOIN pacientes on solicitacoes.id_paciente = pacientes.id
+						    LEFT JOIN procedimentos on solicitacoes.id_procedimento = procedimentos.id
+						    LEFT JOIN tiposolicitacao on solicitacoes.id_tiposolicitacao = tiposolicitacao.id
+						WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%' or procedimentos.descricao LIKE '%$pesquisa%' or tipoSolicitacao.descricao LIKE '%$pesquisa%';"
+					)
+				)['COUNT(*)'];
 			}
 
-			else
-				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.solicitacoes;");
+			else {
+				$execucaoQuery = $query -> ExecutarQueryMysql(
+					"SELECT * FROM teste_sitcon.solicitacoes LIMIT 10 OFFSET $paginacao;"
+				);
+				$quantidadePacientes = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql("SELECT COUNT(*) FROM teste_sitcon.solicitacoes;")
+				)['COUNT(*)'];
+			}
 
 			$contador = 0;
 			while ($dados = mysqli_fetch_assoc($execucaoQuery)) {
 
 				$cor = $contador % 2 == 0 ? '#fafafa' : '#e7f4f9';
-				$nomePaciente = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '". $dados['id_paciente'] ."';"))['nome'];
-				$cpf = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '". $dados['id_paciente'] ."';"))['cpf'];
-				$tipoSolicitacao = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE id LIKE '". $dados['id_tipoSolicitacao'] ."';"))['descricao'];
-				$procedimentos = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE id LIKE '". $dados['id_procedimento'] ."';"))['descricao'];
+				$nomePaciente = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql(
+						"SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $dados['id_paciente'] . "';"
+					)
+				)['nome'];
+				$cpf = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql(
+						"SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $dados['id_paciente'] . "';"
+					)
+				)['cpf'];
+				$tipoSolicitacao = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql(
+						"SELECT * FROM teste_sitcon.tiposolicitacao WHERE id LIKE '" . $dados['id_tipoSolicitacao'] . "';"
+					)
+				)['descricao'];
+				$procedimentos = mysqli_fetch_assoc(
+					$query -> ExecutarQueryMysql(
+						"SELECT * FROM teste_sitcon.procedimentos WHERE id LIKE '" . $dados['id_procedimento'] . "';"
+					)
+				)['descricao'];
 				$data = DateTime ::createFromFormat('Y-m-d', $dados['dataProcedimento']);
 				?>
 
 				<tr>
 					<th scope="row" style="background-color: <?= $cor ?>;"><?= $nomePaciente ?></th>
-					<th scope="row" style="background-color: <?= $cor ?>;"><?= FormatarCPF::FormatarCPF($cpf) ?></th>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= FormatarCPF ::FormatarCPF($cpf) ?></th>
 					<th scope="row" style="background-color: <?= $cor ?>;"><?= $tipoSolicitacao ?></th>
 					<th scope="row" style="background-color: <?= $cor ?>;"><?= $procedimentos ?></th>
 					<th scope="row" style="background-color: <?= $cor ?>;"><?= $data -> format('d/m/Y') ?></th>
 					<th scope="row" style="background-color: <?= $cor ?>;"><?= $dados['horaProcedimento'] ?></th>
 				</tr>
 
-				<?php $contador++; } ?>
+				<?php $contador++;
+			} ?>
 
 			</tbody>
 		</table>
+
+		<nav class="d-flex justify-content-center">
+			<ul class="pagination">
+				<?php
+				$quantidadePaginas = ceil($contador / 10);
+				for ($i = 0; $i < $quantidadePaginas; $i++) { ?>
+					<li class="page-item"><a class="page-link"
+					                         href="?listagemSolicitacoes=true&paginacao=<?= $i ?>"><?= $i + 1 ?></a>
+					</li>
+				<?php } ?>
+			</ul>
+		</nav>
 
 		<?php
 
@@ -169,7 +256,9 @@
 	else {
 
 		$id = AntiInjecaoMysql ::AntiInjecaoMysql($_GET['id']);
-		$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $_GET['id'] . "';");
+		$execucaoQuery = $query -> ExecutarQueryMysql(
+			"SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $_GET['id'] . "';"
+		);
 		$dadosPaciente = mysqli_fetch_assoc($execucaoQuery);
 
 		if (!$dadosPaciente or empty($dadosPaciente))
@@ -222,7 +311,9 @@
 							<option value="">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissional WHERE status LIKE 'ativo';");
+							$execucaoQuery = $query -> ExecutarQueryMysql(
+								"SELECT * FROM teste_sitcon.profissional WHERE status LIKE 'ativo';"
+							);
 
 							while ($profissionais = mysqli_fetch_assoc($execucaoQuery)) {
 								$nome = $profissionais['nome'];
@@ -240,7 +331,10 @@
 							<option value="" id="vazio_tipoSolicitacao">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE status LIKE 'ativo';");
+							$execucaoQuery = $query -> ExecutarQueryMysql(
+								"SELECT * FROM teste_sitcon.tiposolicitacao WHERE status LIKE 'ativo';"
+							);
+
 							while ($tipoSolicitacao = mysqli_fetch_assoc($execucaoQuery)) {
 
 								$descricao = $tipoSolicitacao['descricao'];
@@ -259,7 +353,9 @@
 							<option value="" id="vazio_procedimentos">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';");
+							$execucaoQuery = $query -> ExecutarQueryMysql(
+								"SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';"
+							);
 							while ($procedimentos = mysqli_fetch_assoc($execucaoQuery)) {
 
 								$descricao = $procedimentos['descricao'];
@@ -312,17 +408,21 @@
     let profissionalAtende = [];
     let tipoSolicitacaoProcedimento = [];
 
-    <?php
-	$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissionalatende WHERE status LIKE 'ativo';");
+	<?php
+	$execucaoQuery = $query -> ExecutarQueryMysql(
+		"SELECT * FROM teste_sitcon.profissionalatende WHERE status LIKE 'ativo';"
+	);
 
 	while ($profissionalAtende = mysqli_fetch_assoc($execucaoQuery)) { ?>
-        profissionalAtende.push('<?= $profissionalAtende['profissional_id'] ?> atende <?= $profissionalAtende['procedimento_id'] ?>');
+    profissionalAtende.push('<?= $profissionalAtende['profissional_id'] ?> atende <?= $profissionalAtende['procedimento_id'] ?>');
 	<?php }
 
-	$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';");
+	$execucaoQuery = $query -> ExecutarQueryMysql(
+		"SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';"
+	);
 
 	while ($procedimentos = mysqli_fetch_assoc($execucaoQuery)) { ?>
-        tipoSolicitacaoProcedimento.push('<?= $procedimentos['id'] ?> procedimento <?= $procedimentos['tipoSolicitacao_id'] ?>');
+    tipoSolicitacaoProcedimento.push('<?= $procedimentos['id'] ?> procedimento <?= $procedimentos['tipoSolicitacao_id'] ?>');
 	<?php } ?>
 
 </script>
@@ -330,9 +430,15 @@
 <script src="./js/javaScript.js"></script>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
 
 </body>
 </html>

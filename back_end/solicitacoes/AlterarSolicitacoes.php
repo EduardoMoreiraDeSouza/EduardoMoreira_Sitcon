@@ -101,8 +101,8 @@ class AlterarSolicitacoes extends ExecutarQueryMysql
 						id_procedimento = '" . $dadosProcedimentos['id'] . "',
 						dataProcedimento = '" . $dataProcedimento . "',
 						horaProcedimento = '" . $horaProcedimento . "'
-						WHERE id_paciente LIKE '" . $dadosPaciente['id'] . ";';
-					;");
+						WHERE id_paciente LIKE '" . $dadosPaciente['id'] . "';");
+
 				if ($atualizarSolicitacao) {
 					$this -> mensagem('Solicitação atualizada com sucesso!');
 					return true;
