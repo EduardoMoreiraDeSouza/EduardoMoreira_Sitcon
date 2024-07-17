@@ -5,10 +5,8 @@ require_once __DIR__ . "/../executar_query_mysql/AntiInjecaoMysql.php";
 
 class AlterarSolicitacoes extends ExecutarQueryMysql
 {
-
 	public function __construct()
 	{
-
 		$nomePaciente = AntiInjecaoMysql ::AntiInjecaoMysql($_POST['nomePaciente']);
 		$dataNasc = AntiInjecaoMysql ::AntiInjecaoMysql($_POST['dataNasc']);
 		$cpf = trim(preg_replace('/[^0-9]/', '', AntiInjecaoMysql ::AntiInjecaoMysql($_POST['cpf'])));

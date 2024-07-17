@@ -2,7 +2,6 @@
 
 class ConexaoBancoDados
 {
-
 	public function ConexaoBancoDados()
 	{
 		try {
