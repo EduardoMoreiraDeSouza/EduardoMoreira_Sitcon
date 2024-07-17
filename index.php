@@ -7,7 +7,7 @@
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
 	      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
 	<!-- CSS -->
@@ -26,7 +26,7 @@
 						Solicitações Clínicas
 					</button>
 				</a>
-				<a class="navbar-brand" href="./index.php">
+				<a class="navbar-brand" href="./index.php?listagemSolicitacoes=true">
 					<button type="button" class="btn btn-outline border border-light p-3 text-light">
 						Listagem de Solicitações
 					</button>
@@ -46,7 +46,7 @@
 
 	$query = new ExecutarQueryMysql();
 
-	if (!isset($_GET['id']) or empty($_GET['id'])) {
+	if (!isset($_GET['id']) and !isset($_GET['listagemSolicitacoes'])) {
 
 		?>
 
@@ -75,17 +75,18 @@
 
 			if (isset($_GET['pesquisa']) and !empty($_GET['pesquisa'])) {
 				$pesquisa = AntiInjecaoMysql ::AntiInjecaoMysql(($_GET['pesquisa']));
-				$execucaoQuery = $query -> ExecutarQueryMysql(
-					"SELECT * FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';"
-				);
+				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';");
 			}
+
 			else
 				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes");
 
 			$contador = 0;
 			while ($dados = mysqli_fetch_assoc($execucaoQuery)) {
+
 				$data = DateTime ::createFromFormat('Y-m-d', $dados['dataNasc']);
 				$cor = $contador % 2 == 0 ? '#fafafa' : '#e7f4f9';
+
 				?>
 
 				<tr>
@@ -94,36 +95,88 @@
 					<td style="background-color: <?= $cor ?>;"><?= FormatarCPF ::FormatarCPF($dados['cpf']) ?></td>
 					<td style="background-color: <?= $cor ?>;">
 						<form method="GET">
-							<button type="submit" class="btn text-light fs-5" name="id" style="background-color: #ff8200"
-							        value="<?= $dados['id'] ?>">
-								Prosseguir
-							</button>
+							<button type="submit" class="btn text-light fs-5" name="id" style="background-color: #ff8200" value="<?= $dados['id'] ?>">Prosseguir</button>
 						</form>
 					</td style="background-color: <?= $cor ?>;">
 				</tr>
 
-				<?php
-				$contador++;
-			}
-			?>
+				<?php $contador++; } ?>
 
 			</tbody>
 		</table>
 
 		<?php
 	}
+
+	elseif (isset($_GET['listagemSolicitacoes']) and !empty($_GET['listagemSolicitacoes'])) {
+
+		?>
+
+		<div class="divisao"></div>
+
+		<table class="table text-center tabela-solicitacoes tabela-listagem mt-5">
+			<thead>
+			<tr>
+				<th scope="col" class="bg-primary text-light fs-4 p-4">Paciente</th>
+				<th scope="col" class="bg-primary text-light fs-4 p-4">CPF</th>
+				<th scope="col" class="bg-primary text-light fs-4 p-4">Tipo de Solicitação</th>
+				<th scope="col" class="bg-primary text-light fs-4 p-4">Procedimentos</th>
+				<th scope="col" class="bg-primary text-light fs-4 p-4">Data</th>
+				<th scope="col" class="bg-primary text-light fs-4 p-4">Hora</th>
+			</tr>
+			</thead>
+			<tbody>
+
+			<?php
+
+			if (isset($_GET['pesquisa']) and !empty($_GET['pesquisa'])) {
+				$pesquisa = AntiInjecaoMysql ::AntiInjecaoMysql(($_GET['pesquisa']));
+				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';");
+			}
+
+			else
+				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.solicitacoes;");
+
+			$contador = 0;
+			while ($dados = mysqli_fetch_assoc($execucaoQuery)) {
+
+				$cor = $contador % 2 == 0 ? '#fafafa' : '#e7f4f9';
+				$nomePaciente = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '". $dados['id_paciente'] ."';"))['nome'];
+				$cpf = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '". $dados['id_paciente'] ."';"))['cpf'];
+				$tipoSolicitacao = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE id LIKE '". $dados['id_tipoSolicitacao'] ."';"))['descricao'];
+				$procedimentos = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE id LIKE '". $dados['id_procedimento'] ."';"))['descricao'];
+				$data = DateTime ::createFromFormat('Y-m-d', $dados['dataProcedimento']);
+				?>
+
+				<tr>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= $nomePaciente ?></th>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= FormatarCPF::FormatarCPF($cpf) ?></th>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= $tipoSolicitacao ?></th>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= $procedimentos ?></th>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= $data -> format('d/m/Y') ?></th>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= $dados['horaProcedimento'] ?></th>
+				</tr>
+
+				<?php $contador++; } ?>
+
+			</tbody>
+		</table>
+
+		<?php
+
+	}
+
 	else {
+
 		$id = AntiInjecaoMysql ::AntiInjecaoMysql($_GET['id']);
-		$execucaoQuery = $query -> ExecutarQueryMysql(
-			"SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $_GET['id'] . "';"
-		);
+		$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $_GET['id'] . "';");
 		$dadosPaciente = mysqli_fetch_assoc($execucaoQuery);
 
-		if (!$dadosPaciente or empty($dadosPaciente)) {
+		if (!$dadosPaciente or empty($dadosPaciente))
 			print "<h3>Paciente Não Encontrado!</h3>";
-		}
+
 		else {
-			$data = DateTime ::createFromFormat('Y-m-d', $dadosPaciente['dataNasc']);
+
 			?>
 
 			<div class="container botao-voltar">
@@ -140,23 +193,23 @@
 						<label for="nomePaciente">Nome do Paciente:</label>
 						<input type="text" class="form-control" id="nomePaciente" name="nomePaciente"
 						       placeholder="Nome do Paciente"
-						       value="<?= $dadosPaciente['nome'] ?>" disabled>
+						       value="<?= $dadosPaciente['nome'] ?>" readonly>
 					</div>
 					<div class="col">
 						<label for="dataNasc">Data de Nascimento:</label>
-						<input type="text" class="form-control" id="dataNasc" name="dataNasc"
+						<input type="date" class="form-control" id="dataNasc" name="dataNasc"
 						       placeholder="Data de Nascimento"
-						       value="<?= $data -> format('d/m/Y') ?>" disabled>
+						       value="<?= $dadosPaciente['dataNasc'] ?>" readonly>
 					</div>
 					<div class="col">
 						<label for="cpf">CPF:</label>
 						<input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF"
-						       value="<?= FormatarCPF ::FormatarCPF($dadosPaciente['cpf']) ?>" disabled>
+						       value="<?= FormatarCPF ::FormatarCPF($dadosPaciente['cpf']) ?>" readonly>
 					</div>
 				</div>
 
 				<div class="row mt-4">
-					<div class="alert alert-warning" role="alert">
+					<div class="alert alerta" role="alert">
 						<b>Atenção!</b> Os campos com <b>*</b> devem ser preenchidos obrigatóriamente.
 					</div>
 				</div>
@@ -169,9 +222,8 @@
 							<option value="">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql(
-								"SELECT * FROM teste_sitcon.profissional WHERE status LIKE 'ativo';"
-							);
+							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissional WHERE status LIKE 'ativo';");
+
 							while ($profissionais = mysqli_fetch_assoc($execucaoQuery)) {
 								$nome = $profissionais['nome'];
 								$id = $profissionais['id'];
@@ -188,13 +240,13 @@
 							<option value="" id="vazio_tipoSolicitacao">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql(
-								"SELECT * FROM teste_sitcon.tiposolicitacao WHERE status LIKE 'ativo';"
-							);
+							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE status LIKE 'ativo';");
 							while ($tipoSolicitacao = mysqli_fetch_assoc($execucaoQuery)) {
+
 								$descricao = $tipoSolicitacao['descricao'];
 								$id = $tipoSolicitacao['id'];
 								print "<option value='$id'>$descricao</option>";
+
 							}
 
 							?>
@@ -207,13 +259,13 @@
 							<option value="" id="vazio_procedimentos">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql(
-								"SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';"
-							);
+							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';");
 							while ($procedimentos = mysqli_fetch_assoc($execucaoQuery)) {
+
 								$descricao = $procedimentos['descricao'];
 								$id = $procedimentos['id'];
 								print "<option value='$id' id='$id'>$descricao</option>";
+
 							}
 
 							?>

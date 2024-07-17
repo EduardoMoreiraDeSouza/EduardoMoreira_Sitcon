@@ -6,11 +6,11 @@ class ExecutarQueryMysql extends ConexaoBancoDados
 {
 	public function ExecutarQueryMysql($sql)
 	{
-		try {
+		//try {
 			return mysqli_query($this -> ConexaoBancoDados(), $sql);
-		} catch (Exception $e) {
-			print "Erro ao executar query MySql";
-			return false;
-		}
+		//} catch (Exception $e) {
+		//	print "Erro ao executar query MySql";
+		//	return false;
+		//}
 	}
 }

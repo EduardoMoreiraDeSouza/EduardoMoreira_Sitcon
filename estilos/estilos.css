@@ -9,7 +9,7 @@ body {
     background: #efefef;
 }
 
-form.pesquisa-solicitacoes {
+form.pesquisa-solicitacoes, .divisao {
     margin-top: 50px;
     display: inline-block;
     max-width: 700px;
@@ -81,7 +81,7 @@ form.descricao-solicitacao {
     justify-content: center;
 }
 
-form.descricao-solicitacao input[disabled]{
+form.descricao-solicitacao input[readonly]{
     background: #edf8fc;
 }
 
@@ -99,7 +99,7 @@ div.botao-salvar {
     justify-content: right;
 }
 
-.alert-warning {
+.alerta {
     display: inline-block;
     width: 98.3%;
     text-align: center;

@@ -102,9 +102,11 @@ CREATE TABLE solicitacoes (
     id_tipoSolicitacao INT,
     id_procedimento INT,
     dataProcedimento DATE,
-    horaProcediemento TIME,
+    horaProcedimento TIME,
 
     CONSTRAINT PK_id_solicitacoes PRIMARY KEY (id),
+
+    CONSTRAINT UC_id_paciente_solicitacoes UNIQUE (id_paciente),
 
     CONSTRAINT FK_id_paciente_solicitacoes FOREIGN KEY (id_paciente)
     REFERENCES pacientes(id) ON DELETE CASCADE ON UPDATE CASCADE,
