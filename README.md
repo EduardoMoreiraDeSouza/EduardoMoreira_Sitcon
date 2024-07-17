@@ -17,11 +17,7 @@ Repositório dedicado à realização de um teste
 
 CREATE DATABASE teste_sitcon;
 
----
-
 USE teste_sitcon;
-
----
 
 CREATE TABLE pacientes (
     id INT AUTO_INCREMENT,
@@ -35,9 +31,6 @@ CREATE TABLE pacientes (
 
 ) DEFAULT CHARSET = utf8;
 
-
----
-
 CREATE TABLE profissional (
     id INT AUTO_INCREMENT,
     nome VARCHAR(40),
@@ -47,9 +40,6 @@ CREATE TABLE profissional (
 
 ) DEFAULT CHARSET = utf8;
 
-
----
-
 CREATE TABLE tipoSolicitacao (
     id INT AUTO_INCREMENT,
     descricao VARCHAR(40),
@@ -58,9 +48,6 @@ CREATE TABLE tipoSolicitacao (
     CONSTRAINT PK_id_tipoSolicitacao PRIMARY KEY (id)
 
 ) DEFAULT CHARSET = utf8;
-
-
----
 
 CREATE TABLE procedimentos (
     id INT AUTO_INCREMENT,
@@ -73,9 +60,6 @@ CREATE TABLE procedimentos (
     REFERENCES tipoSolicitacao (id) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) DEFAULT CHARSET = utf8;
-
-
----
 
 CREATE TABLE profissionalAtende (
     id INT AUTO_INCREMENT,
@@ -91,9 +75,6 @@ CREATE TABLE profissionalAtende (
     REFERENCES profissional(id) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) DEFAULT CHARSET = utf8;
-
-
----
 
 CREATE TABLE solicitacoes (
     id INT AUTO_INCREMENT,
@@ -122,25 +103,19 @@ CREATE TABLE solicitacoes (
 
 ) DEFAULT CHARSET = utf8;
 
----
-
 ## Inserção dos Dados:
 
 insert into pacientes (id, nome, dataNasc, CPF, status) values (1,'Augusto Fernandes','20000810', 21029829309, 'ativo');
-insert into pacientes (id, nome, dataNasc, CPF, status) values (2,'Maria Silva Oliveira','19990321', 21029829308, '
-ativo');
+insert into pacientes (id, nome, dataNasc, CPF, status) values (2,'Maria Silva Oliveira','19990321', 21029829308, 'ativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (3,'Alfonse Smikchuz','20021002', 21029829307, 'ativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (4,'Nagela Perreira','19970516', 21029829306, 'ativo');
-insert into pacientes (id, nome, dataNasc, CPF, status) values (6,'João Paulo Ferreira','19950626', 21029829305, '
-inativo');
+insert into pacientes (id, nome, dataNasc, CPF, status) values (6,'João Paulo Ferreira','19950626', 21029829305, 'inativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (5,'Gustavo Hernanes','20010710', 21029829304, 'ativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (9,'Zira Silva','20030214', 21029829303, 'ativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (8,'Helena Marques','20000111', 21029829302, 'ativo');
-insert into pacientes (id, nome, dataNasc, CPF, status) values (7,'Julio Costa Martins','19801123', 21029829301, '
-ativo');
+insert into pacientes (id, nome, dataNasc, CPF, status) values (7,'Julio Costa Martins','19801123', 21029829301, 'ativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (10,'João Bicalho','19930312', 21029829300, 'inativo');
-insert into pacientes (id, nome, dataNasc, CPF, status) values (12,'Carolina Rosa Silva','20011224', 21029829390, '
-ativo');
+insert into pacientes (id, nome, dataNasc, CPF, status) values (12,'Carolina Rosa Silva','20011224', 21029829390, 'ativo');
 insert into pacientes (id, nome, dataNasc, CPF, status) values (11,'Paulina Araujo','20020810', 21029829399, 'ativo');
 
 insert into profissional (id, nome, status) values (1,'Orlando Nobrega', 'ativo');
