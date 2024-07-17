@@ -2,8 +2,9 @@
 
 Repositório dedicado à realização de um teste
 
-Recomendo inserir os dados presentes nesse readme, pois alterei o nome da coluna da tabela procedimentos, coluna antiga: tipo_id, coluna nova: tipoSolicitacao_id,
-Para visualizar a listagem de solicitações, é preciso criar novas solicitações manualmente no próprio site, prosseguindo com um paciente e salvando o formulário.
+* Recomendo inserir os dados presentes nesse readme, pois alterei o nome da coluna da tabela procedimentos, coluna antiga: tipo_id, coluna nova: tipoSolicitacao_id.
+
+* Para visualizar a listagem de solicitações, é preciso criar novas solicitações manualmente no próprio site, prosseguindo com um paciente e salvando o formulário.
 
 ---
 
