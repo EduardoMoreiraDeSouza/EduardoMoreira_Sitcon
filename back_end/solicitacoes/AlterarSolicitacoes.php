@@ -12,3 +12,5 @@ class AlterarSolicitacoes extends ExecutarQueryMysql
 
 	}
 }
+
+new AlterarSolicitacoes();

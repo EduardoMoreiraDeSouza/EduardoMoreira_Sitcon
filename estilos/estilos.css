@@ -81,6 +81,10 @@ form.descricao-solicitacao {
     justify-content: center;
 }
 
+form.descricao-solicitacao input[disabled]{
+    background: #edf8fc;
+}
+
 form.descricao-solicitacao input, form.descricao-solicitacao select{
     padding: 20px;
 }
@@ -118,5 +122,5 @@ label {
     justify-content: center;
     align-items: center;
     height: 25vh;
-    margin-top: 5%;
+    margin-top: 15%;
 }

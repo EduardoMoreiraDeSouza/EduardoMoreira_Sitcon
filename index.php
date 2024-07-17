@@ -26,6 +26,11 @@
 						Solicitações Clínicas
 					</button>
 				</a>
+				<a class="navbar-brand" href="./index.php">
+					<button type="button" class="btn btn-outline border border-light p-3 text-light">
+						Listagem de Solicitações
+					</button>
+				</a>
 			</div>
 		</div>
 	</nav>
@@ -55,7 +60,7 @@
 			</div>
 		</form>
 
-		<table class="table table-striped table-primary text-center tabela-solicitacoes">
+		<table class="table text-center tabela-solicitacoes">
 			<thead>
 			<tr>
 				<th scope="col" class="bg-primary text-light fs-4 p-4">Paciente</th>
@@ -69,31 +74,36 @@
 			<?php
 
 			if (isset($_GET['pesquisa']) and !empty($_GET['pesquisa'])) {
-				$pesquisa = AntiInjecaoMysql::AntiInjecaoMysql(($_GET['pesquisa']));
-				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%' or dataNasc LIKE '%$pesquisa%'");
+				$pesquisa = AntiInjecaoMysql ::AntiInjecaoMysql(($_GET['pesquisa']));
+				$execucaoQuery = $query -> ExecutarQueryMysql(
+					"SELECT * FROM teste_sitcon.pacientes WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%';"
+				);
 			}
 			else
 				$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes");
 
+			$contador = 0;
 			while ($dados = mysqli_fetch_assoc($execucaoQuery)) {
 				$data = DateTime ::createFromFormat('Y-m-d', $dados['dataNasc']);
+				$cor = $contador % 2 == 0 ? '#fafafa' : '#e7f4f9';
 				?>
 
 				<tr>
-					<th scope="row"><?= $dados['nome'] ?></th>
-					<td><?= $data -> format('d/m/Y') ?></td>
-					<td><?= FormatarCPF ::FormatarCPF($dados['cpf']) ?></td>
-					<td>
+					<th scope="row" style="background-color: <?= $cor ?>;"><?= $dados['nome'] ?></th>
+					<td style="background-color: <?= $cor ?>;"><?= $data -> format('d/m/Y') ?></td>
+					<td style="background-color: <?= $cor ?>;"><?= FormatarCPF ::FormatarCPF($dados['cpf']) ?></td>
+					<td style="background-color: <?= $cor ?>;">
 						<form method="GET">
-							<button type="submit" class="btn btn-warning text-light fs-5" name="id"
+							<button type="submit" class="btn text-light fs-5" name="id" style="background-color: #ff8200"
 							        value="<?= $dados['id'] ?>">
 								Prosseguir
 							</button>
 						</form>
-					</td>
+					</td style="background-color: <?= $cor ?>;">
 				</tr>
 
 				<?php
+				$contador++;
 			}
 			?>
 
@@ -122,17 +132,20 @@
 				</a>
 			</div>
 
-			<form class="container descricao-solicitacao" >
+			<form class="container descricao-solicitacao" action="./back_end/solicitacoes/AlterarSolicitacoes.php"
+			      method="POST">
 
 				<div class="row">
 					<div class="col">
 						<label for="nomePaciente">Nome do Paciente:</label>
-						<input type="text" class="form-control" id="nomePaciente" name="nomePaciente" placeholder="Nome do Paciente"
+						<input type="text" class="form-control" id="nomePaciente" name="nomePaciente"
+						       placeholder="Nome do Paciente"
 						       value="<?= $dadosPaciente['nome'] ?>" disabled>
 					</div>
 					<div class="col">
 						<label for="dataNasc">Data de Nascimento:</label>
-						<input type="text" class="form-control" id="dataNasc" name="dataNasc" placeholder="Data de Nascimento"
+						<input type="text" class="form-control" id="dataNasc" name="dataNasc"
+						       placeholder="Data de Nascimento"
 						       value="<?= $data -> format('d/m/Y') ?>" disabled>
 					</div>
 					<div class="col">
@@ -153,7 +166,7 @@
 					<div class="col-12">
 						<label for="profissional">Profissional*</label>
 						<select class="form-control" id="profissional" name="profissional" required>
-							<option>Selecione</option>
+							<option value="">Selecione</option>
 							<?php
 
 							$execucaoQuery = $query -> ExecutarQueryMysql(
@@ -172,7 +185,7 @@
 					<div class="col-6 mt-4">
 						<label for="tipoSolicitacao">Tipo de Solicitação*</label>
 						<select class="form-control" id="tipoSolicitacao" name="tipoSolicitacao" required>
-							<option>Selecione</option>
+							<option value="" id="vazio_tipoSolicitacao">Selecione</option>
 							<?php
 
 							$execucaoQuery = $query -> ExecutarQueryMysql(
@@ -191,7 +204,7 @@
 					<div class="col-6 mt-4">
 						<label for="procedimentos">Procedimentos*</label>
 						<select class="form-control" id="procedimentos" name="procedimentos" required>
-							<option>Selecione</option>
+							<option value="" id="vazio_procedimentos">Selecione</option>
 							<?php
 
 							$execucaoQuery = $query -> ExecutarQueryMysql(
@@ -200,8 +213,7 @@
 							while ($procedimentos = mysqli_fetch_assoc($execucaoQuery)) {
 								$descricao = $procedimentos['descricao'];
 								$id = $procedimentos['id'];
-								$idTipo = $procedimentos['tipoSolicitacao_id'];
-								print "<option value='$id|$idTipo'>$descricao</option>";
+								print "<option value='$id' id='$id'>$descricao</option>";
 							}
 
 							?>
@@ -237,23 +249,38 @@
 <footer class="rodape">
 	<div class="container-fluid py-3">
 		<div class="row">
-			<div class="col-12 text-center">
-				<p class="mb-0">Eduardo_Moreira_SITCON</p>
-			</div>
+			<div class="col-12 text-center"><p class="mb-0">Eduardo_Moreira_SITCON</p></div>
 		</div>
 	</div>
 </footer>
 
+<!-- JS -->
+<script>
+
+    let profissionalAtende = [];
+    let tipoSolicitacaoProcedimento = [];
+
+    <?php
+	$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissionalatende WHERE status LIKE 'ativo';");
+
+	while ($profissionalAtende = mysqli_fetch_assoc($execucaoQuery)) { ?>
+        profissionalAtende.push('<?= $profissionalAtende['profissional_id'] ?> atende <?= $profissionalAtende['procedimento_id'] ?>');
+	<?php }
+
+	$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE status LIKE 'ativo';");
+
+	while ($procedimentos = mysqli_fetch_assoc($execucaoQuery)) { ?>
+        tipoSolicitacaoProcedimento.push('<?= $procedimentos['id'] ?> procedimento <?= $procedimentos['tipoSolicitacao_id'] ?>');
+	<?php } ?>
+
+</script>
+
+<script src="./js/javaScript.js"></script>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
 </body>
 </html>
