@@ -1,5 +1,8 @@
 # EduardoMoreira_Sitcon
+
 Repositório dedicado à realização de um teste
+
+(Recomendo inserir os dados presentes nesse readme, pois alterei o nome da coluna da tabela procedimentos, coluna antiga: tipo_id, coluna nova: tipoSolicitacao_id)
 
 ---
 
