@@ -46,7 +46,7 @@ class AlterarSolicitacoes extends ExecutarQueryMysql
 		}
 
 		if ($dadosProcedimentos['tipoSolicitacao_id'] == $dadosTipoSolicitacao['id']) {
-			$execucaoProfissionalAtende = $this -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissionalatende WHERE status LIKE 'ativo' AND profissional_id LIKE '" . $dadosProfissional['id'] . "' AND procedimento_id LIKE '" . $dadosProcedimentos['id'] . "';;");
+			$execucaoProfissionalAtende = $this -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissionalAtende WHERE status LIKE 'ativo' AND profissional_id LIKE '" . $dadosProfissional['id'] . "' AND procedimento_id LIKE '" . $dadosProcedimentos['id'] . "';;");
 			if (!$execucaoProfissionalAtende) {
 				$this -> mensagem('Este profissional não atende este procedimento!');
 				return false;

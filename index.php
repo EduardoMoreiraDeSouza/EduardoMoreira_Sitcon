@@ -358,7 +358,7 @@
     let tipoSolicitacaoProcedimento = [];
 
 	<?php
-	$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissionalatende WHERE status LIKE 'ativo';");
+	$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.profissionalAtende WHERE status LIKE 'ativo';");
 
 	while ($profissionalAtende = mysqli_fetch_assoc($execucaoQuery)) { ?>
         profissionalAtende.push('<?= $profissionalAtende['profissional_id'] ?> atende <?= $profissionalAtende['procedimento_id'] ?>');
