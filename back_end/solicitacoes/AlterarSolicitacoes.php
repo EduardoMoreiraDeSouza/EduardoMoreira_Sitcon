@@ -31,7 +31,7 @@ class AlterarSolicitacoes extends ExecutarQueryMysql
 			return false;
 		}
 
-		$execucaoTipoSolicitacao = $this -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE id LIKE '$tipoSolicitacao' AND status LIKE 'ativo';");
+		$execucaoTipoSolicitacao = $this -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tipoSolicitacao WHERE id LIKE '$tipoSolicitacao' AND status LIKE 'ativo';");
 		$dadosTipoSolicitacao = mysqli_fetch_assoc($execucaoTipoSolicitacao);
 		if (empty($dadosTipoSolicitacao)) {
 			$this -> mensagem('Não existe este tipo de solicitação no sistema!');

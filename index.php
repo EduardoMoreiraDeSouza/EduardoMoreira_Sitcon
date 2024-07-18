@@ -164,7 +164,7 @@
 					"SELECT * FROM teste_sitcon.solicitacoes
 						    LEFT JOIN pacientes on solicitacoes.id_paciente = pacientes.id
 						    LEFT JOIN procedimentos on solicitacoes.id_procedimento = procedimentos.id
-						    LEFT JOIN tiposolicitacao on solicitacoes.id_tiposolicitacao = tiposolicitacao.id
+						    LEFT JOIN tipoSolicitacao on solicitacoes.id_tipoSolicitacao = tipoSolicitacao.id
 						WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%' or procedimentos.descricao LIKE '%$pesquisa%' or tipoSolicitacao.descricao LIKE '%$pesquisa%' LIMIT 10 OFFSET 0;");
 
 				$quantidadeSolicitacoes = mysqli_fetch_assoc(
@@ -172,7 +172,7 @@
 						"SELECT COUNT(*) FROM teste_sitcon.solicitacoes
 						    LEFT JOIN pacientes on solicitacoes.id_paciente = pacientes.id
 						    LEFT JOIN procedimentos on solicitacoes.id_procedimento = procedimentos.id
-						    LEFT JOIN tiposolicitacao on solicitacoes.id_tiposolicitacao = tiposolicitacao.id
+						    LEFT JOIN tipoSolicitacao on solicitacoes.id_tipoSolicitacao = tipoSolicitacao.id
 						WHERE nome LIKE '%$pesquisa%' OR cpf LIKE '%$pesquisa%' or procedimentos.descricao LIKE '%$pesquisa%' or tipoSolicitacao.descricao LIKE '%$pesquisa%';"
 					))['COUNT(*)'];
 			}
@@ -188,7 +188,7 @@
 				$cor = $contador % 2 == 0 ? '#fafafa' : '#e7f4f9';
 				$nomePaciente = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $dados['id_paciente'] . "';"))['nome'];
 				$cpf = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.pacientes WHERE id LIKE '" . $dados['id_paciente'] . "';"))['cpf'];
-				$tipoSolicitacao = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE id LIKE '" . $dados['id_tipoSolicitacao'] . "';"))['descricao'];
+				$tipoSolicitacao = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tipoSolicitacao WHERE id LIKE '" . $dados['id_tipoSolicitacao'] . "';"))['descricao'];
 				$procedimentos = mysqli_fetch_assoc($query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.procedimentos WHERE id LIKE '" . $dados['id_procedimento'] . "';"))['descricao'];
 				$data = DateTime ::createFromFormat('Y-m-d', $dados['dataProcedimento']);
 
@@ -289,7 +289,7 @@
 							<option value="" id="vazio_tipoSolicitacao">Selecione</option>
 							<?php
 
-							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tiposolicitacao WHERE status LIKE 'ativo';");
+							$execucaoQuery = $query -> ExecutarQueryMysql("SELECT * FROM teste_sitcon.tipoSolicitacao WHERE status LIKE 'ativo';");
 							while ($tipoSolicitacao = mysqli_fetch_assoc($execucaoQuery)) {
 								$descricao = $tipoSolicitacao['descricao'];
 								$id = $tipoSolicitacao['id'];
