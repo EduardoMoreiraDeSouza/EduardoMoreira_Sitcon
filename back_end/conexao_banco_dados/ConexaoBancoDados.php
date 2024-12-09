@@ -10,7 +10,7 @@ class ConexaoBancoDados
 				'root',
 				'',
 				'teste_sitcon',
-				'3306'
+				'3307'
 			);
 		} catch (Exception $e) {
 			print "Houve um erro ao conectar com o servidor MySQL";
